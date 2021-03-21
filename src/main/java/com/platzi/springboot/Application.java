@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+
+import java.util.function.Function;
 
 @SpringBootApplication
 public class Application implements CommandLineRunner {
@@ -25,6 +28,11 @@ public class Application implements CommandLineRunner {
         this.userProperties = userProperties;
     }
 
+    @Bean
+    public Function<String, String> uppercase() {
+        return (String value) -> value.toUpperCase();
+    }
+
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
@@ -38,5 +46,7 @@ public class Application implements CommandLineRunner {
         System.out.println("hola mundo utilizando spring boot devtools");
         System.out.println("hola mundo utilizando spring boot devtools");
         logger.info("error en el aplicativo");
+        Function function = uppercase();
+        System.out.println(function.apply("michael"));
     }
 }
