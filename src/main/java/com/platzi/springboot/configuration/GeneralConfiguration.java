@@ -15,9 +15,12 @@ public class GeneralConfiguration {
     @Value("${value.name}")
     private String name;
 
+    @Value("${value.random}")
+    private String randomValue;
+
     @Bean
     public MyBean myBean(){
-        return new MyBeanTwoImpl(name);
+        return new MyBeanTwoImpl(name, randomValue);
     }
 
 }

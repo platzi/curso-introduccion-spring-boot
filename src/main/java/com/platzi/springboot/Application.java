@@ -43,8 +43,6 @@ public class Application implements CommandLineRunner {
         myComponent.printSomething();
         System.out.println(userProperties.toString());
         System.out.println("hola mundo utilizando spring boot devtools");
-        System.out.println("hola mundo utilizando spring boot devtools");
-        System.out.println("hola mundo utilizando spring boot devtools");
         logger.info("error en el aplicativo");
         Function function = uppercase();
         System.out.println(function.apply("michael"));
