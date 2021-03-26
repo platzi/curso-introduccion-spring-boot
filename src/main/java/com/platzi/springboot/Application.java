@@ -58,6 +58,33 @@ public class Application implements CommandLineRunner {
         System.out.println(function.apply("michael"));
         saveUsersInDb();
         System.out.println(userService.getUserByEmail("oscar@domain.com"));
+        userService.getUsersByName("J").stream().forEach(System.out::println);
+        saveWithErrorTransactional();
+
+
+    }
+
+    private void saveWithErrorTransactional() {
+        User test1 = new User("TestTransactional1", "TestTransactional1@domain.com", LocalDate.now());
+        User test2 = new User("TestTransactional2", "TestTransactional2@domain.com", LocalDate.now());
+        User test3 = new User("TestTransactional3", null, LocalDate.now());
+//        User test3 = new User("TestTransactional3", "TestTransactional4@domain.com", LocalDate.now()); //ejemplo dos
+        User test4 = new User("TestTransactional4", "TestTransactional4@domain.com", LocalDate.now());
+        List<User> users = Arrays.asList(test1, test2, test3, test4);
+
+        try {
+            userService.save(users);
+            users.stream().forEach(user -> logger.info("Mi usuario registrado " + user.toString()));
+        } catch (RuntimeException e) {
+            logger.error("La siguiente exepcion ocurrio durante la ejecución del metodo para registrar usuarios");
+            logger.error(e.getMessage());
+        }
+        getUsers();
+    }
+
+    private void getUsers() {
+        List<User> users = userRepository.findAll();
+        users.forEach(user -> logger.info(user.toString()));
     }
 
     private void saveUsersInDb() {
@@ -71,9 +98,9 @@ public class Application implements CommandLineRunner {
         User user8 = new User("Test4", "Test4@domain.com", LocalDate.now());
         User user9 = new User("Test5", "Test5@domain.com", LocalDate.now());
         User user10 = new User("Test6", "Test6@domain.com", LocalDate.now());
-        User user11 = new User("Test7", "Test6@domain.com", LocalDate.now());
-        User user12 = new User("Test8", "Test6@domain.com", LocalDate.now());
-        User user13 = new User("Test9", "Test6@domain.com", LocalDate.now());
+        User user11 = new User("Test7", "Test7@domain.com", LocalDate.now());
+        User user12 = new User("Test8", "Test8@domain.com", LocalDate.now());
+        User user13 = new User("Test9", "Test9@domain.com", LocalDate.now());
         List<User> list = Arrays.asList(user4, user1, user3, user2, user5, user6, user7, user8, user9, user10, user11, user12, user13);
         list.stream().forEach(userRepository::save);
 

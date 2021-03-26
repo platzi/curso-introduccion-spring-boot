@@ -12,7 +12,7 @@ public class User {
     private Long id;
     @Column(length = 50)
     private String name;
-    @Column(length = 50)
+    @Column(length = 50, nullable = false, unique = true)
     private String email;
     @Column(name = "birth_date")
     private LocalDate birthDate;
