@@ -2,8 +2,10 @@ package com.platzi.springboot;
 
 import com.platzi.springboot.bean.MyBean;
 import com.platzi.springboot.component.MyComponent;
+import com.platzi.springboot.entity.Posts;
 import com.platzi.springboot.entity.User;
 import com.platzi.springboot.pojo.properties.UserProperties;
+import com.platzi.springboot.repository.PostRepository;
 import com.platzi.springboot.repository.UserRepository;
 import com.platzi.springboot.services.UserService;
 import org.apache.commons.logging.Log;
@@ -13,6 +15,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -28,13 +31,15 @@ public class Application implements CommandLineRunner {
     private MyComponent myComponent;
     private UserProperties userProperties;
     private UserRepository userRepository;
+    private PostRepository postRepository;
     private UserService userService;
 
-    public Application(MyBean myBean, @Qualifier("cualquierNombre") MyComponent myComponent, UserProperties userProperties, UserRepository userRepository, UserService userService) {
+    public Application(MyBean myBean, @Qualifier("cualquierNombre") MyComponent myComponent, UserProperties userProperties, UserRepository userRepository, UserService userService, PostRepository postRepository) {
         this.myBean = myBean;
         this.myComponent = myComponent;
         this.userProperties = userProperties;
         this.userRepository = userRepository;
+        this.postRepository = postRepository;
         this.userService = userService;
     }
 
@@ -60,6 +65,7 @@ public class Application implements CommandLineRunner {
         System.out.println(userService.getUserByEmail("oscar@domain.com"));
         userService.getUsersByName("J").stream().forEach(System.out::println);
         saveWithErrorTransactional();
+        System.out.println(userService.getUserByEmail("Test9@domain.com").getPosts());
 
 
     }
@@ -103,6 +109,9 @@ public class Application implements CommandLineRunner {
         User user13 = new User("Test9", "Test9@domain.com", LocalDate.now());
         List<User> list = Arrays.asList(user4, user1, user3, user2, user5, user6, user7, user8, user9, user10, user11, user12, user13);
         list.stream().forEach(userRepository::save);
+        postRepository.save(new Posts("Mi post test1", user12));
+        postRepository.save(new Posts("Mi post test2", user13));
+        postRepository.save(new Posts("Mi post test3", user13));
 
     }
 }

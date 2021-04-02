@@ -2,6 +2,8 @@ package com.platzi.springboot.entity;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -16,6 +18,8 @@ public class User {
     private String email;
     @Column(name = "birth_date")
     private LocalDate birthDate;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Posts> posts = new ArrayList<>();
 
     public User() {
     }
@@ -56,6 +60,10 @@ public class User {
 
     public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
+    }
+
+    public List<Posts> getPosts() {
+        return posts;
     }
 
     @Override
