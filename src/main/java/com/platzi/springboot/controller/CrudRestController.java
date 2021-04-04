@@ -4,6 +4,7 @@ import com.platzi.springboot.entity.Posts;
 import com.platzi.springboot.entity.User;
 import com.platzi.springboot.repository.PostRepository;
 import com.platzi.springboot.repository.UserRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,12 +34,27 @@ public class CrudRestController {
     User newUser(@RequestBody User newUser) {
         return userRepository.save(newUser);
     }
+//Todo: Ejemplo con responseEntity
+
+//    @PostMapping("/users")
+//    ResponseEntity<User> newUserResponseEntity(@RequestBody User newUser) {
+//        return new ResponseEntity<>(userRepository.save(newUser), HttpStatus.CREATED);
+//    }
 
     @GetMapping("/users/{id}")
     User getOne(@PathVariable Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
+    // Todo: Ejemplo con responseEntity
+
+//    @GetMapping("/users/{id}")
+//    ResponseEntity<User> getOne(@PathVariable Long id) {
+//        if (userRepository.existsById(id)) {
+//            return new ResponseEntity<>(userRepository.findById(id).get(), HttpStatus.OK);
+//        }
+//        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+//    }
 
     @PutMapping("/users/{id}")
     User replaceUser(@RequestBody User newUser, @PathVariable Long id) {
@@ -51,10 +67,42 @@ public class CrudRestController {
                     return userRepository.save(user);
                 }).orElseThrow(() -> new UserNotFoundException(id));
     }
+// Todo: Ejemplo con responseEntity:
+
+//    @PutMapping("/users/{id}")
+//    ResponseEntity<User> replaceUser(@RequestBody User newUser, @PathVariable Long id) {
+//        if (userRepository.existsById(id)) {
+//            return new ResponseEntity(userRepository.findById(id)
+//                    .map(user -> {
+//                        user.setEmail(newUser.getEmail());
+//                        user.setBirthDate(newUser.getBirthDate());
+//                        user.setName(newUser.getName());
+//                        return userRepository.save(user);
+//                    }).get(), HttpStatus.OK);
+//        }
+//        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+//    }
 
     @DeleteMapping("/users/{id}")
     void deleteEmployee(@PathVariable Long id) {
         userRepository.deleteById(id);
+    }
+// Todo: Ejemplo con responseEntity:
+
+//    @DeleteMapping("/users/{id}")
+//    ResponseEntity deleteUser(@PathVariable Long id) {
+//        boolean existsUserById = userRepository.existsById(id);
+//        if (existsUserById) {
+//            userRepository.deleteById(id);
+//            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//        }
+//        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+//
+//    }
+
+    @GetMapping("/users/pageable")
+    public List<User> getUserPageable(@RequestParam int page, @RequestParam int size) {
+        return userRepository.findAll(PageRequest.of(page, size)).getContent();
     }
 
 }
