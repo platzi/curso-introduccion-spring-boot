@@ -21,6 +21,7 @@ public class User {
     @Column(name = "birth_date")
     private LocalDate birthDate;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnore
     private List<Posts> posts = new ArrayList<>();
 
     public User() {
