@@ -1,5 +1,7 @@
 package com.platzi.springboot.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -19,6 +21,7 @@ public class User {
     @Column(name = "birth_date")
     private LocalDate birthDate;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnore
     private List<Posts> posts = new ArrayList<>();
 
     public User() {
