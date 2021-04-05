@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/users")
 public class CrudRestController {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
@@ -20,7 +20,7 @@ public class CrudRestController {
         this.postRepository = postRepository;
     }
 
-    @GetMapping("/users")
+    @GetMapping("/")
     List<User> all() {
         return userRepository.findAll();
     }
@@ -30,7 +30,7 @@ public class CrudRestController {
         return postRepository.findAll();
     }
 
-    @PostMapping("/users")
+    @PostMapping("/")
     User newUser(@RequestBody User newUser) {
         return userRepository.save(newUser);
     }
@@ -41,7 +41,7 @@ public class CrudRestController {
 //        return new ResponseEntity<>(userRepository.save(newUser), HttpStatus.CREATED);
 //    }
 
-    @GetMapping("/users/{id}")
+    @GetMapping("/{id}")
     User getOne(@PathVariable Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
@@ -56,7 +56,7 @@ public class CrudRestController {
 //        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
 //    }
 
-    @PutMapping("/users/{id}")
+    @PutMapping("/{id}")
     User replaceUser(@RequestBody User newUser, @PathVariable Long id) {
 
         return userRepository.findById(id)
@@ -83,7 +83,7 @@ public class CrudRestController {
 //        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
 //    }
 
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("/{id}")
     void deleteEmployee(@PathVariable Long id) {
         userRepository.deleteById(id);
     }
@@ -100,7 +100,7 @@ public class CrudRestController {
 //
 //    }
 
-    @GetMapping("/users/pageable")
+    @GetMapping("/pageable")
     public List<User> getUserPageable(@RequestParam int page, @RequestParam int size) {
         return userRepository.findAll(PageRequest.of(page, size)).getContent();
     }
