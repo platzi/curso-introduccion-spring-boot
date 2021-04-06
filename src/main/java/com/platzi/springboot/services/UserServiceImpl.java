@@ -1,6 +1,8 @@
 package com.platzi.springboot.services;
 
+import com.platzi.springboot.domain.UserDomain;
 import com.platzi.springboot.entity.User;
+import com.platzi.springboot.mapper.UserMapper;
 import com.platzi.springboot.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,5 +42,16 @@ public class UserServiceImpl implements UserService {
         users.stream()
                 .peek(user -> logger.info("Insert: " + user))
                 .forEach(user -> userRepository.save(user));
+    }
+
+    @Transactional
+    @Override
+    public UserDomain saveOneUser(UserDomain newUser) {
+       return UserMapper.toDomain(userRepository.save(UserMapper.toEntity(newUser)));
+    }
+
+    @Override
+    public List<UserDomain> getUsers() {
+        return UserMapper.toDomainList(userRepository.findAll());
     }
 }
