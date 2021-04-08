@@ -26,3 +26,9 @@ curl --location --request PUT 'localhost:8081/app/users/3' \
 
 curl --location --request DELETE 'localhost:8081/app/users/4' \
 --data-raw ''
+
+**Service pageable**
+
+curl --location --request GET 'localhost:8081/app/api/users/pageable?page=1&size=4' \
+--header 'Content-Type: application/json' \
+--data-raw ''
