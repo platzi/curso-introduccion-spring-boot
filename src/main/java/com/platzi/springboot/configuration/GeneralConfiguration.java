@@ -2,7 +2,10 @@ package com.platzi.springboot.configuration;
 
 import com.platzi.springboot.bean.MyBean;
 import com.platzi.springboot.bean.implementation.MyBeanTwoImpl;
+import com.platzi.springboot.caseuse.GetUsers;
+import com.platzi.springboot.caseuse.impl.GetUsersImpl;
 import com.platzi.springboot.pojo.properties.UserProperties;
+import com.platzi.springboot.services.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -36,6 +39,11 @@ public class GeneralConfiguration {
     @Bean
     public MyBean myBean() {
         return new MyBeanTwoImpl(name, randomValue);
+    }
+
+    @Bean
+    public GetUsers getUsers(UserService userService) {
+        return new GetUsersImpl(userService);
     }
 
     @Bean

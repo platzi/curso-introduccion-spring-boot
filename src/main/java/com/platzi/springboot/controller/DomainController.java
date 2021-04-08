@@ -1,6 +1,7 @@
 package com.platzi.springboot.controller;
 
 import com.platzi.springboot.caseuse.GetUsers;
+import com.platzi.springboot.caseuse.impl.GetUsersImpl;
 import com.platzi.springboot.caseuse.SaveUser;
 import com.platzi.springboot.domain.UserDomain;
 import org.springframework.http.HttpStatus;
