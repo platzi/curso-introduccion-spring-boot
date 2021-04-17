@@ -10,6 +10,7 @@ import com.platzi.springboot.repository.UserRepository;
 import com.platzi.springboot.services.UserService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import com.platzi.springboot.services.BeanWithDependencies;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -26,6 +27,7 @@ public class Application implements CommandLineRunner {
 
     private final Log logger = LogFactory.getLog(this.getClass());
 
+    private BeanWithDependencies beanWithDependencies;
     private MyBean myBean;
     private MyComponent myComponent;
     private UserProperties userProperties;
@@ -33,9 +35,10 @@ public class Application implements CommandLineRunner {
     private PostRepository postRepository;
     private UserService userService;
 
-    public Application(MyBean myBean, @Qualifier("cualquierNombre") MyComponent myComponent, UserProperties userProperties, UserRepository userRepository, UserService userService, PostRepository postRepository) {
+    public Application(MyBean myBean, BeanWithDependencies beanWithDependencies, @Qualifier("cualquierNombre") MyComponent myComponent, UserProperties userProperties, UserRepository userRepository, UserService userService, PostRepository postRepository) {
         this.myBean = myBean;
         this.myComponent = myComponent;
+        this.beanWithDependencies = beanWithDependencies;
         this.userProperties = userProperties;
         this.userRepository = userRepository;
         this.postRepository = postRepository;
@@ -44,7 +47,7 @@ public class Application implements CommandLineRunner {
 
     @Bean
     public Function<String, String> uppercase() {
-        return (String value) -> value.toUpperCase();
+        return String::toUpperCase;
     }
 
     public static void main(String[] args) {
@@ -58,8 +61,9 @@ public class Application implements CommandLineRunner {
         System.out.println(userProperties.toString());
         System.out.println("hola mundo utilizando spring boot devtools");
         logger.info("error en el aplicativo");
-        Function function = uppercase();
+        Function<String, String> function = uppercase();
         System.out.println(function.apply("michael"));
+        System.out.println(beanWithDependencies.operationWithDependencies());
         saveUsersInDb();
         System.out.println(userService.getUserByEmail("oscar@domain.com"));
         userService.getUsersByName("J").stream().forEach(System.out::println);
