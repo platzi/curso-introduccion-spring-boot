@@ -1,6 +1,7 @@
 package com.platzi.springboot;
 
 import com.platzi.springboot.bean.MyBean;
+import com.platzi.springboot.component.MyBeanCommandLineRunner;
 import com.platzi.springboot.component.MyComponent;
 import com.platzi.springboot.entity.Posts;
 import com.platzi.springboot.entity.User;
@@ -16,6 +17,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -27,15 +29,16 @@ public class Application implements CommandLineRunner {
 
     private final Log logger = LogFactory.getLog(this.getClass());
 
-    private BeanWithDependencies beanWithDependencies;
-    private MyBean myBean;
-    private MyComponent myComponent;
-    private UserProperties userProperties;
-    private UserRepository userRepository;
-    private PostRepository postRepository;
-    private UserService userService;
+    private final BeanWithDependencies beanWithDependencies;
+    private final MyBean myBean;
+    private final MyBeanCommandLineRunner beanCommandLineRunner;
+    private final MyComponent myComponent;
+    private final UserProperties userProperties;
+    private final UserRepository userRepository;
+    private final PostRepository postRepository;
+    private final UserService userService;
 
-    public Application(MyBean myBean, BeanWithDependencies beanWithDependencies, @Qualifier("cualquierNombre") MyComponent myComponent, UserProperties userProperties, UserRepository userRepository, UserService userService, PostRepository postRepository) {
+    public Application(MyBean myBean, BeanWithDependencies beanWithDependencies, @Qualifier("cualquierNombre") MyComponent myComponent, UserProperties userProperties, UserRepository userRepository, UserService userService, PostRepository postRepository,  MyBeanCommandLineRunner beanCommandLineRunner) {
         this.myBean = myBean;
         this.myComponent = myComponent;
         this.beanWithDependencies = beanWithDependencies;
@@ -43,6 +46,7 @@ public class Application implements CommandLineRunner {
         this.userRepository = userRepository;
         this.postRepository = postRepository;
         this.userService = userService;
+        this.beanCommandLineRunner = beanCommandLineRunner;
     }
 
     @Bean
@@ -66,10 +70,28 @@ public class Application implements CommandLineRunner {
         System.out.println(beanWithDependencies.operationWithDependencies());
         saveUsersInDb();
         System.out.println(userService.getUserByEmail("oscar@domain.com"));
-        userService.getUsersByName("J").stream().forEach(System.out::println);
+        userService.getUsersByName("J").forEach(System.out::println);
         saveWithErrorTransactional();
         System.out.println(userService.getUserByEmail("Test9@domain.com").getPosts());
 
+        logger.info("User with method findUserByNameAndEmail: " + userRepository.findUsersByNameAndAndEmail("John", "john@domain.com")
+                .orElseThrow(() -> new RuntimeException("No se encontro el usuario por el email dado")));
+        logger.info("User with method findUserByNameOrEmail: " + userRepository.findUsersByNameOrAndEmail(null, "john@domain.com")
+                .orElseThrow(() -> new RuntimeException("No se encontro el usuario por el email dado")));
+        userRepository.findByBirthDateBetween(LocalDate.of(2021, 3, 15), LocalDate.of(2021, 3, 25))
+                .forEach(user -> logger.info("User with method findByBirthDateBetween:" + user));
+
+        userRepository.findByNameLikeOrderByIdDesc("%T%")
+                .forEach(user -> logger.info("User with method findByNameLikeOrderByIdDesc:" + user));
+
+        logger.info("User with method findMyUserByEmailNative: " + userRepository.findMyUserByEmailNative("Test5@domain.com")
+                .orElseThrow(() -> new RuntimeException("No se encontro el usuario por el email dado")));
+
+        userRepository.findByAndSort("Test", Sort.by("id").descending())
+                .forEach(user -> logger.info("User with method findByAndSort:" + user));
+
+        logger.info("User with method findByNameOrEmail: " + userRepository.findByNameOrEmail(null, "Test5@domain.com")
+                .orElseThrow(() -> new RuntimeException("No se encontro el usuario por el email dado")));
 
     }
 
@@ -83,7 +105,7 @@ public class Application implements CommandLineRunner {
 
         try {
             userService.save(users);
-            users.stream().forEach(user -> logger.info("Mi usuario registrado " + user.toString()));
+            users.forEach(user -> logger.info("Mi usuario registrado " + user.toString()));
         } catch (RuntimeException e) {
             logger.error("La siguiente exepcion ocurrio durante la ejecución del metodo para registrar usuarios");
             logger.error(e.getMessage());
@@ -97,9 +119,9 @@ public class Application implements CommandLineRunner {
     }
 
     private void saveUsersInDb() {
-        User user1 = new User("John", "john@domain.com", LocalDate.of(2021, 1, 13));
-        User user2 = new User("Julie", "julie@domain.com", LocalDate.of(2021, 2, 21));
-        User user3 = new User("Daniela", "daniela@domain.com", LocalDate.of(2021, 4, 2));
+        User user1 = new User("John", "john@domain.com", LocalDate.of(2021, 3, 15));
+        User user2 = new User("Julie", "julie@domain.com", LocalDate.of(2021, 3, 20));
+        User user3 = new User("Daniela", "daniela@domain.com", LocalDate.of(2021, 3, 25));
         User user4 = new User("Oscar", "oscar@domain.com", LocalDate.of(2021, 6, 7));
         User user5 = new User("Test1", "Test1@domain.com", LocalDate.of(2021, 8, 23));
         User user6 = new User("Test2", "Test2@domain.com", LocalDate.of(2021, 9, 25));
@@ -109,9 +131,9 @@ public class Application implements CommandLineRunner {
         User user10 = new User("Test6", "Test6@domain.com", LocalDate.of(2021, 2, 13));
         User user11 = new User("Test7", "Test7@domain.com", LocalDate.now());
         User user12 = new User("Test8", "Test8@domain.com", LocalDate.now());
-        User user13 = new User("Test9", "Test9@domain.com", LocalDate.of(2021, 05, 06));
+        User user13 = new User("Test9", "Test9@domain.com", LocalDate.of(2021, 5, 6));
         List<User> list = Arrays.asList(user4, user1, user3, user2, user5, user6, user7, user8, user9, user10, user11, user12, user13);
-        list.stream().forEach(userRepository::save);
+        list.forEach(userRepository::save);
         postRepository.save(new Posts("Mi post test1", user12));
         postRepository.save(new Posts("Mi post test2", user13));
         postRepository.save(new Posts("Mi post test3", user13));
