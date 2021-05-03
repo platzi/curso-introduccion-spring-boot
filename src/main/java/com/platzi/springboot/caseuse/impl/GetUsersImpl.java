@@ -3,7 +3,6 @@ package com.platzi.springboot.caseuse.impl;
 import com.platzi.springboot.caseuse.GetUsers;
 import com.platzi.springboot.domain.UserDomain;
 import com.platzi.springboot.services.UserService;
-import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
 import java.util.List;
